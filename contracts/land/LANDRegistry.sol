@@ -1,3 +1,4 @@
+// solium-disable linebreak-style
 pragma solidity ^0.4.23;
 
 import "../Storage.sol";
@@ -14,7 +15,7 @@ import "../metadata/IMetadataHolder.sol";
 
 import "../estate/IEstateRegistry.sol";
 
-
+// solium-disable indentation
 /* solium-disable function-order */
 contract LANDRegistry is Storage, Ownable, FullAssetRegistry, ILANDRegistry {
   bytes4 constant public GET_METADATA = bytes4(keccak256("getMetadata(uint256)"));
@@ -39,6 +40,14 @@ contract LANDRegistry is Storage, Ownable, FullAssetRegistry, ILANDRegistry {
     require(
       msg.sender == _ownerOf(assetId),
       "This function can only be called by the owner of the asset"
+    );
+    _;
+  }
+
+  modifier onlyManagerOrOwnerOf(uint256 assetId) {
+    require(
+      msg.sender == _ownerOf(assetId) || msg.sender == _managerOf(assetId),
+      "This function can only be called by the manager or the owner of the asset"
     );
     _;
   }
@@ -167,6 +176,10 @@ contract LANDRegistry is Storage, Ownable, FullAssetRegistry, ILANDRegistry {
   function _ownerOfLand(int x, int y) internal view returns (address) {
     return _ownerOf(_encodeTokenId(x, y));
   }
+  
+  function _managerOf(uint256 tokenId) internal view returns (address) {
+    return updateManager[tokenId];
+  }
 
   function ownerOfLandMany(int[] x, int[] y) external view returns (address[]) {
     require(x.length > 0, "You should supply at least one coordinate");
@@ -292,9 +305,14 @@ contract LANDRegistry is Storage, Ownable, FullAssetRegistry, ILANDRegistry {
     }
   }
 
-  function setUpdateOperator(uint256 assetId, address operator) external onlyOwnerOf(assetId) {
+  function setUpdateOperator(uint256 assetId, address operator) external onlyManagerOrOwnerOf(assetId) {
     updateOperator[assetId] = operator;
     emit UpdateOperator(assetId, operator);
+  }
+
+  function setUpdateManager(uint256 assetId, address manager) external onlyOwnerOf(assetId) {
+    updateManager[assetId] = manager;
+    emit UpdateManager(assetId, manager);
   }
 
   //

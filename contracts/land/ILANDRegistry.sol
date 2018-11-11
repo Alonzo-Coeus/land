@@ -1,3 +1,4 @@
+// solium-disable linebreak-style
 pragma solidity ^0.4.18;
 
 interface ILANDRegistry {
@@ -36,6 +37,11 @@ interface ILANDRegistry {
   );
 
   event UpdateOperator(
+    uint256 indexed assetId,
+    address indexed operator
+  );
+
+  event UpdateManager(
     uint256 indexed assetId,
     address indexed operator
   );

@@ -1,8 +1,9 @@
+// solium-disable linebreak-style
 pragma solidity ^0.4.23;
 
 import "../estate/IEstateRegistry.sol";
 
-
+// solium-disable indentation
 contract LANDStorage {
   mapping (address => uint) public latestPing;
 
@@ -13,6 +14,7 @@ contract LANDStorage {
   mapping (address => bool) internal _deprecated_authorizedDeploy;
 
   mapping (uint256 => address) public updateOperator;
+  mapping (uint256 => address) public updateManager;
 
   IEstateRegistry public estateRegistry;
 
